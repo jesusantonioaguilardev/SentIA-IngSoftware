@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SentIA · Software de monitoreo</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- GUI-0.1 Inicio de sesión del psicólogo -->
+  <section id="vista-login" class="login" hidden>
+    <form id="form-login" class="tarjeta login-caja" novalidate>
+      <div class="logo grande"><span class="logo-icono">S</span> SentIA</div>
+      <p class="sub">Software de monitoreo para el psicólogo</p>
+      <label>Correo <span class="req">*</span>
+        <input id="login-correo" type="email" autocomplete="username" value="christian.martinez@correo.com" required>
+      </label>
+      <label>Contraseña <span class="req">*</span>
+        <input id="login-contrasena" type="password" autocomplete="current-password" minlength="8" required>
+      </label>
+      <p id="login-error" class="error" role="alert"></p>
+      <button class="btn primario ancho" type="submit">Iniciar sesión</button>
+      <p class="ayuda">Prototipo · contraseña de demo: <code>SentIA2026!</code></p>
+      <p class="ayuda"><a href="/descargar-app">Descargar la app del paciente (Android)</a></p>
+    </form>
+  </section>
+
+  <div id="vista-app" class="app" hidden>
+    <aside class="menu">
+      <div class="logo"><span class="logo-icono">S</span> SentIA</div>
+      <nav>
+        <a href="#/panel" data-ruta="panel">Panel de monitoreo <span id="badge-alertas" class="badge" hidden></span></a>
+        <a href="#/pacientes" data-ruta="pacientes">Pacientes</a>
+        <a href="#/asignar" data-ruta="asignar">Asignar instrumento</a>
+        <a href="#/resultados" data-ruta="resultados">Resultados clínicos <span id="badge-resultados" class="badge naranja" hidden></span></a>
+        <a href="#/reportes" data-ruta="reportes">Reportes</a>
+        <a href="#/bitacora" data-ruta="bitacora">Bitácora</a>
+      </nav>
+      <p class="menu-pie">Prototipo semifuncional · Equipo #1</p>
+    </aside>
+    <main>
+      <header class="barra">
+        <h1 id="titulo">Panel de monitoreo</h1>
+        <div class="usuario"><span id="nombre-usuario"></span> <button id="btn-salir" class="btn texto">Cerrar sesión</button></div>
+      </header>
+      <div id="contenido" class="contenido"></div>
+    </main>
+  </div>
+
+  <!-- S-01 Alerta de peligro / GUI-1.2 Atender alerta -->
+  <div id="modal" class="modal-fondo" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-titulo">
+      <div id="modal-cuerpo"></div>
+    </div>
+  </div>
+  <div id="toast" class="toast" hidden></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

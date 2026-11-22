@@ -1,0 +1,10 @@
+# Dependencias y compilaciones
+node_modules/
+*.apk
+*.aab
+.idea/
+.vscode/
+
+# Material de trabajo que no va en el repositorio
+capturas/
+Plan_Prototipo_SentIA.md

@@ -1,0 +1,9 @@
+**/node_modules
+android
+sql
+
+docker/bd
+*.md
+.env
+presentacion
+capturas

@@ -1,0 +1,70 @@
+# SentIA · todo el backend en Docker:
+#   bd         SQL Server 2022 (Linux) con los datos en un volumen
+#   bd-inicio  crea la BD con el script del entregable 13 la primera vez y aplica los ajustes del prototipo
+#   api        API + software de monitoreo del psicólogo en http://localhost:3000
+# La app Android (emulador o celular) se conecta a la API en el puerto 3000.
+name: sentia
+
+services:
+  bd:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sentia-bd
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: "Express"
+      MSSQL_SA_PASSWORD: ${SA_PASSWORD}
+      TZ: ${ZONA_HORARIA:-America/Hermosillo}
+    ports:
+      - "${PUERTO_BD:-14333}:1433"
+    volumes:
+      - sentia-datos:/var/opt/mssql
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -C -b -Q \"SELECT 1\" -o /dev/null"]
+      interval: 5s
+      timeout: 5s
+      retries: 40
+      start_period: 15s
+    restart: unless-stopped
+
+  bd-inicio:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sentia-bd-inicio
+    depends_on:
+      bd:
+        condition: service_healthy
+    environment:
+      SA_PASSWORD: ${SA_PASSWORD}
+      REINICIAR: ${REINICIAR_BD:-0}
+    volumes:
+      - "./docker/bd/inicializar.sh:/inicializar.sh:ro"
+      # Script base de la BD (modelo del entregable 13 de análisis y diseño)
+      - "./docker/bd/base:/sql-base:ro"
+      - "./sql:/sql-prototipo:ro"
+    entrypoint: ["/bin/bash", "/inicializar.sh"]
+    restart: "no"
+
+  api:
+    build:
+      context: .
+      dockerfile: docker/api.Dockerfile
+    image: sentia-api
+    container_name: sentia-api
+    depends_on:
+      bd-inicio:
+        condition: service_completed_successfully
+    environment:
+      SENTIA_DB_HOST: bd
+      SENTIA_DB_PORT: "1433"
+      SENTIA_DB_USER: sa
+      SENTIA_DB_PASSWORD: ${SA_PASSWORD}
+      SENTIA_ESCALAR_MIN: ${ESCALAR_MIN:-5}
+      SENTIA_APK: /apk/app-debug.apk
+    ports:
+      - "${PUERTO_API:-3000}:3000"
+    volumes:
+      # Si la APK ya está compilada, se puede descargar desde http://localhost:3000/descargar-app
+      - "./android/app/build/outputs/apk/debug:/apk:ro"
+    restart: unless-stopped
+
+volumes:
+  sentia-datos:
