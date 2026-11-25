@@ -17,6 +17,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material.icons.outlined.SentimentDissatisfied
+import androidx.compose.material.icons.outlined.SentimentNeutral
+import androidx.compose.material.icons.outlined.SentimentSatisfied
+import androidx.compose.material.icons.outlined.SentimentVeryDissatisfied
+import androidx.compose.material.icons.outlined.SentimentVerySatisfied
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -46,7 +52,14 @@ import mx.edu.ith.sentia.data.Api
 import mx.edu.ith.sentia.data.ErrorDeApi
 import mx.edu.ith.sentia.data.Inicio
 
-private val ANIMOS = listOf("😞" to "Muy mal", "🙁" to "Mal", "😐" to "Regular", "🙂" to "Bien", "😄" to "Muy bien")
+/** Escala de ánimo 1–5 con los íconos de sentimiento de Material Design. */
+val ANIMOS: List<Pair<ImageVector, String>> = listOf(
+    Icons.Outlined.SentimentVeryDissatisfied to "Muy mal",
+    Icons.Outlined.SentimentDissatisfied to "Mal",
+    Icons.Outlined.SentimentNeutral to "Regular",
+    Icons.Outlined.SentimentSatisfied to "Bien",
+    Icons.Outlined.SentimentVerySatisfied to "Muy bien",
+)
 
 /** GUI-5.2 Inicio de la app: estado de ánimo, evaluación pendiente, chat y botón de emergencia. */
 @Composable
@@ -71,19 +84,23 @@ fun PantallaInicio(irA: (Pantalla) -> Unit, pedirEmergencia: () -> Unit, avisosS
                 Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     Text("Mi estado de ánimo", style = MaterialTheme.typography.titleMedium)
                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                        ANIMOS.forEachIndexed { i, (emoji, nombre) ->
+                        ANIMOS.forEachIndexed { i, (icono, nombre) ->
                             val valor = i + 1
+                            val elegido = animo == valor
                             Column(horizontalAlignment = Alignment.CenterHorizontally,
                                 modifier = Modifier.clip(RoundedCornerShape(12.dp))
-                                    .background(if (animo == valor) Colores.MoradoClaro else Color.Transparent)
+                                    .background(if (elegido) Colores.MoradoClaro else Color.Transparent)
                                     .clickable {
                                         animo = valor
                                         alcance.launch { runCatching { Api.registrarAnimo(valor) } }
                                     }
                                     .semantics { contentDescription = nombre }
                                     .padding(horizontal = 6.dp, vertical = 8.dp)) {
-                                Text(emoji, fontSize = 30.sp)
-                                Text(nombre, style = MaterialTheme.typography.labelSmall, color = Colores.TextoApoyo)
+                                Icon(icono, contentDescription = null, modifier = Modifier.size(36.dp),
+                                    tint = if (elegido) Colores.Morado else Colores.TextoApoyo)
+                                Text(nombre, style = MaterialTheme.typography.labelSmall,
+                                    color = if (elegido) Colores.MoradoOscuro else Colores.TextoApoyo,
+                                    fontWeight = if (elegido) FontWeight.SemiBold else FontWeight.Normal)
                             }
                         }
                     }

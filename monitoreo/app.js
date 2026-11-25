@@ -5,6 +5,15 @@ const API = '/api';
 const $ = s => document.querySelector(s);
 const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const NIVEL_TXT = { CRITICO: 'Crítico', ALTO: 'Alto', MEDIO: 'Medio', BAJO: 'Bajo' };
+// Íconos de línea en SVG (sin emojis)
+const svg = (trazos, clase = 'ico') => `<svg class="${clase}" viewBox="0 0 24 24" aria-hidden="true">${trazos}</svg>`;
+const ICONO = {
+  alerta: (c) => svg('<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/>', c),
+  atras: () => svg('<path d="m12 19-7-7 7-7"/><path d="M19 12H5"/>'),
+  descargar: () => svg('<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/>'),
+  check: () => svg('<path d="M20 6 9 17l-5-5"/>'),
+  telefono: () => svg('<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/>'),
+};
 const ORIGEN_TXT = { CONVERSACION: 'Conversación con SentIA', RESULTADO: 'Resultado de instrumento', BOTON_EMERGENCIA: 'Botón de emergencia' };
 const nivel = n => n ? `<span class="nivel ${esc(n)}">${esc(NIVEL_TXT[n] || n)}</span>` : '—';
 const estado = e => e ? `<span class="estado ${esc(e)}">${esc(String(e).replace('_', ' '))}</span>` : '—';
@@ -169,7 +178,7 @@ async function abrirAlerta(id) {
   const m = $('#modal'), cuerpo = $('#modal-cuerpo');
   cuerpo.innerHTML = `
     <div class="modal-cab ${a.nivel_riesgo === 'CRITICO' || a.nivel_riesgo === 'ALTO' ? 'peligro pulso' : ''}">
-      <h2 id="modal-titulo" style="margin:0">⚠ Alerta de peligro · ${esc(NIVEL_TXT[a.nivel_riesgo])}</h2>
+      <h2 id="modal-titulo" class="con-ico" style="margin:0; gap:10px">${ICONO.alerta('ico grande')} Alerta de peligro · ${esc(NIVEL_TXT[a.nivel_riesgo])}</h2>
       <button class="btn texto" data-cerrar>Cerrar</button>
     </div>
     <div class="modal-cuerpo">
@@ -187,7 +196,7 @@ async function abrirAlerta(id) {
       ${a.resultado ? `<p style="margin:0"><b>Resultado:</b> ${esc(a.resultado.siglas)} · puntaje ${esc(a.resultado.puntaje)} (${esc(a.resultado.categoria)})</p>` : ''}
       ${a.mensajes.length ? `<div><h3>Conversación reciente</h3><div class="chat-mini">${a.mensajes.map(x => `<div class="burbuja ${esc(x.emisor)}">${esc(x.texto)}</div>`).join('')}</div></div>` : ''}
       <div id="zona-atencion">
-        ${a.estado === 'EN_ATENCION' ? '' : '<button class="btn peligro ancho" id="btn-atender">Atender alerta</button>'}
+        ${a.estado === 'EN_ATENCION' ? '' : `<button class="btn peligro ancho con-ico" style="justify-content:center" id="btn-atender">${ICONO.telefono()} Atender alerta</button>`}
       </div>
     </div>`;
   m.hidden = false;
@@ -398,10 +407,10 @@ async function vistaResultado(id) {
   const maxEv = Math.max(...r.evolucion.map(e => e.puntaje), 1);
   $('#contenido').innerHTML = `
     <div class="fila entre no-print">
-      <a class="btn texto" href="#/resultados">← Volver a resultados</a>
+      <a class="btn texto con-ico" href="#/resultados">${ICONO.atras()} Volver a resultados</a>
       <div class="fila">
-        ${r.retroalimentacion_autorizada ? '<span class="estado ATENDIDA">Retroalimentación autorizada</span>' : '<button class="btn secundario" id="btn-autorizar">Autorizar retroalimentación al paciente</button>'}
-        <button class="btn primario" onclick="window.print()">Descargar reporte (PDF)</button>
+        ${r.retroalimentacion_autorizada ? `<span class="estado ATENDIDA con-ico">${ICONO.check()} Retroalimentación autorizada</span>` : '<button class="btn secundario" id="btn-autorizar">Autorizar retroalimentación al paciente</button>'}
+        <button class="btn primario con-ico" onclick="window.print()">${ICONO.descargar()} Descargar reporte (PDF)</button>
       </div>
     </div>
     <article class="reporte">
@@ -419,7 +428,7 @@ async function vistaResultado(id) {
       <p><b>Interpretación (pre-valoración):</b> ${esc(r.interpretacion)}</p>
       <p><b>Recomendación:</b> ${esc(r.recomendacion)}</p>
       <h3>Guía de evaluación</h3>
-      <p>${r.guia.map(g => `${esc(g.categoria)}: ${g.puntaje_min}–${g.puntaje_max}${g.indica_riesgo ? ' ⚠' : ''}`).join(' · ')}</p>
+      <p>${r.guia.map(g => `${esc(g.categoria)}: ${g.puntaje_min}–${g.puntaje_max}${g.indica_riesgo ? ' (indica riesgo)' : ''}`).join(' · ')}</p>
       <h3>Evolución de puntajes (${esc(r.instrumento)})</h3>
       <div class="barras">${r.evolucion.map(e => `<div class="barra-v"><b>${e.puntaje}</b><i style="height:${Math.max(6, e.puntaje / maxEv * 120)}px"></i>${fecha(e.fecha_aplicacion)}</div>`).join('')}</div>
       <h3 style="margin-top:16px">Valor por reactivo</h3>

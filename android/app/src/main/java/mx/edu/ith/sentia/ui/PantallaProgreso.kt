@@ -8,6 +8,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Icon
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
@@ -95,15 +98,23 @@ private fun TarjetaResultado(r: Retroalimentacion) {
 
 @Composable
 private fun GraficaAnimo(puntos: List<PuntoAnimo>) {
-    Canvas(Modifier.fillMaxWidth().height(120.dp)) {
-        val paso = size.width / (puntos.size - 1).coerceAtLeast(1)
-        val y = { v: Double -> size.height - ((v - 1) / 4.0 * (size.height - 16f)).toFloat() - 8f }
-        for (n in 1..5) drawLine(Colores.Gris.copy(alpha = .5f), Offset(0f, y(n.toDouble())), Offset(size.width, y(n.toDouble())), 1f)
-        val pts = puntos.mapIndexed { i, p -> Offset(i * paso, y(p.valor)) }
-        pts.zipWithNext().forEach { (a, b) -> drawLine(Colores.Morado, a, b, strokeWidth = 6f, cap = StrokeCap.Round) }
-        pts.forEach { drawCircle(Colores.Morado, 8f, it) }
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        // Eje: arriba "Muy bien", abajo "Muy mal" (mismos íconos que en Inicio)
+        Column(Modifier.height(120.dp).padding(end = 10.dp), verticalArrangement = Arrangement.SpaceBetween) {
+            Icon(ANIMOS[4].first, contentDescription = ANIMOS[4].second, tint = Colores.Verde, modifier = Modifier.size(24.dp))
+            Icon(ANIMOS[0].first, contentDescription = ANIMOS[0].second, tint = Colores.Naranja, modifier = Modifier.size(24.dp))
+        }
+        Canvas(Modifier.weight(1f).height(120.dp)) {
+            val paso = size.width / (puntos.size - 1).coerceAtLeast(1)
+            val y = { v: Double -> size.height - ((v - 1) / 4.0 * (size.height - 16f)).toFloat() - 8f }
+            for (n in 1..5) drawLine(Colores.Gris.copy(alpha = .5f), Offset(0f, y(n.toDouble())), Offset(size.width, y(n.toDouble())), 1f)
+            val pts = puntos.mapIndexed { i, p -> Offset(i * paso, y(p.valor)) }
+            pts.zipWithNext().forEach { (a, b) -> drawLine(Colores.Morado, a, b, strokeWidth = 6f, cap = StrokeCap.Round) }
+            pts.forEach { drawCircle(Colores.Morado, 8f, it) }
+        }
     }
-    Row { Text("😞", Modifier.weight(1f)); Text("Últimos ${puntos.size} días", style = MaterialTheme.typography.labelSmall, color = Colores.TextoApoyo); Text("  😄") }
+    Text("Últimos ${puntos.size} días", style = MaterialTheme.typography.labelSmall, color = Colores.TextoApoyo,
+        modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.End)
 }
 
 @Composable

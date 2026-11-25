@@ -11,11 +11,11 @@ import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.List
-import androidx.compose.material.icons.filled.Face
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.automirrored.outlined.Assignment
+import androidx.compose.material.icons.outlined.ChatBubbleOutline
+import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Insights
+import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
@@ -59,11 +59,11 @@ sealed interface Pantalla {
 
 /** Barra de navegación inferior con 5 secciones. */
 enum class Pestana(val titulo: String, val icono: ImageVector) {
-    Inicio("Inicio", Icons.Filled.Home),                                 // GUI-5.2
-    Chat("SentIA", Icons.Filled.Face),                                   // GUI-5.3
-    Evaluaciones("Pruebas", Icons.AutoMirrored.Filled.List),             // GUI-6.1 Mis evaluaciones
-    Progreso("Progreso", Icons.Filled.Star),                             // GUI-7.1 Mi progreso
-    Perfil("Perfil", Icons.Filled.Person),                               // GUI-8.2
+    Inicio("Inicio", Icons.Outlined.Home),                               // GUI-5.2
+    Chat("SentIA", Icons.Outlined.ChatBubbleOutline),                    // GUI-5.3
+    Evaluaciones("Pruebas", Icons.AutoMirrored.Outlined.Assignment),     // GUI-6.1 Mis evaluaciones
+    Progreso("Progreso", Icons.Outlined.Insights),                       // GUI-7.1 Mi progreso
+    Perfil("Perfil", Icons.Outlined.Person),                             // GUI-8.2
 }
 
 @Composable

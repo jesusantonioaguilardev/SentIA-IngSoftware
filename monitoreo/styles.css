@@ -30,10 +30,16 @@ code { background: var(--gris-100); padding: 1px 5px; border-radius: 4px; }
 .ayuda { font-size: 13px; color: var(--gris-500); text-align: center; margin: 0; }
 
 /* Layout: menú lateral a la izquierda, título arriba a la izquierda, usuario arriba a la derecha */
-.app { display: grid; grid-template-columns: 240px 1fr; min-height: 100%; }
+.app { display: grid; grid-template-columns: 264px 1fr; min-height: 100%; }
 .menu { background: var(--blanco); border-right: 1px solid var(--gris-300); padding: 20px 14px; display: flex; flex-direction: column; gap: 22px; position: sticky; top: 0; height: 100vh; }
 .menu nav { display: grid; gap: 4px; }
-.menu nav a { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; border-radius: 8px; color: var(--gris-700); text-decoration: none; font-weight: 500; }
+.menu nav a { display: flex; gap: 12px; align-items: center; padding: 10px 12px; border-radius: 8px; color: var(--gris-700); text-decoration: none; font-weight: 500; }
+.menu nav a .badge { margin-left: auto; }
+.menu nav a span { white-space: nowrap; }
+/* Íconos de línea (SVG en el propio código, sin emojis) */
+.ico { width: 18px; height: 18px; flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.ico.grande { width: 24px; height: 24px; }
+.con-ico { display: inline-flex; align-items: center; gap: 8px; }
 .menu nav a:hover { background: var(--azul-claro); color: var(--azul); }
 .menu nav a.activo { background: var(--azul); color: #fff; }
 .menu-pie { margin-top: auto; font-size: 12px; color: var(--gris-500); }
